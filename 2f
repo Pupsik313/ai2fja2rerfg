@@ -1,0 +1,32 @@
+local Players = game:GetService("Players")
+local TeleportService = game:GetService("TeleportService")
+local Workspace = game:GetService("Workspace")
+
+local gameId = 7239319209
+local serverLimit = 39
+
+local function onCharacterAdded(character)
+    local moneyPrinter = Workspace:FindFirstChild("Money Printer")
+    if moneyPrinter then
+        local proximityPrompt = moneyPrinter:FindFirstChildWhichIsA("ProximityPrompt", true)
+        if proximityPrompt then
+            local rootPart = character:WaitForChild("HumanoidRootPart")
+            rootPart.CFrame = moneyPrinter:GetPivot()
+            task.wait(1) -- Wait for a moment to ensure player is at the location
+            proximityPrompt:InputHoldBegin()
+            task.wait(0.5) -- Hold the prompt for a short duration
+            proximityPrompt:InputHoldEnd()
+        end
+    else
+        TeleportService:TeleportToPlaceInstance(gameId, nil, Players.LocalPlayer)
+    end
+end
+
+Players.PlayerAdded:Connect(function(player)
+    player.CharacterAdded:Connect(onCharacterAdded)
+end)
+
+for _, player in Players:GetPlayers() do
+    player.CharacterAdded:Connect(onCharacterAdded)
+end
+
